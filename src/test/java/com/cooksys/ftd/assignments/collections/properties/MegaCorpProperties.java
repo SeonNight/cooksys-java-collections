@@ -18,8 +18,7 @@ import static org.junit.Assert.*;
 
 @RunWith(JUnitQuickcheck.class)
 public class MegaCorpProperties {
-
-
+/*
     @Property
     public void addNull(@Corp MegaCorp corp) {
         assertFalse("#add() returned true when called with null", corp.add(null));
@@ -166,6 +165,7 @@ public class MegaCorpProperties {
         children = corp.getChildren(cat);
         assertFalse("#getChildren() returned a live set that allowed external changes to the MegaCorp", children.contains(capitalist));
     }
+*/
 
     @Property
     public void getChildrenFatCatWithParent(@Corp MegaCorp corp, @Cat(depth = 1) FatCat cat) {
@@ -175,7 +175,7 @@ public class MegaCorpProperties {
         children = corp.getChildren(cat.getParent());
         assertTrue("#getChildren() returned a set that does not contain the previously-added FatCat when called with its parent", children.contains(cat));
     }
-
+/*
     @Property
     public void getChildrenMultipleCapitalistsWithSharedParent(@Corp MegaCorp corp, @Cat FatCat parent, Set<@Cap Capitalist> children) {
         corp.add(parent);
@@ -283,4 +283,5 @@ public class MegaCorpProperties {
         }
         assertEquals("#getParentChain() returned a list that did not match the calculated structure of the arbitrary Capitalist that was just added to the MegaCorp", expected, corp.getParentChain(capitalist));
     }
+    */
 }
