@@ -36,7 +36,7 @@ public class MegaCorpProperties {
         assertTrue("#has() returned false when called with the parent-less FatCat that was just added", corp.has(cat));
        
     }
-
+    
     @Property
     public void addHasCapitalistWithParent(@Corp MegaCorp corp, @Cap(depth = 1) Capitalist cap) {
         assertTrue("#add() returned false when called with a Capitalist", corp.add(cap));
@@ -69,7 +69,7 @@ public class MegaCorpProperties {
             assertFalse("#add() returned true when called with a previously-added Capitalist after adding multiple Capitalists", corp.add(capitalist));
         }
     }
-
+    
     @Property
     public void getElementsEmpty(@Corp MegaCorp corp) {
         Set<Capitalist> elements = corp.getElements();
