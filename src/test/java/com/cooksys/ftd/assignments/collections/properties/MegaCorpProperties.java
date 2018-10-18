@@ -29,11 +29,12 @@ public class MegaCorpProperties {
         assertFalse("#add() returned true when called with a parent-less WageSlave", corp.add(slave));
         assertFalse("#has() returned true when called with a parent-less WageSlave that failed to be added", corp.has(slave));
     }
-
+	
     @Property
     public void addHasParentlessFatCat(@Corp MegaCorp corp, @Cat FatCat cat) {
         assertTrue("#add() returned false when called with a parent-less FatCat", corp.add(cat));
         assertTrue("#has() returned false when called with the parent-less FatCat that was just added", corp.has(cat));
+       
     }
 
     @Property

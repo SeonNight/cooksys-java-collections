@@ -9,8 +9,15 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.*;
 
 public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
+	//Private Fields
 	private Map<Capitalist, FatCat> workers = new HashMap<Capitalist, FatCat>();
 	private Map<FatCat, Set<Capitalist>> owners = new HashMap<FatCat,Set<Capitalist>>(); //parents
+	
+	//Defensive Copies
+	private Map<FatCat, Set<Capitalist>> mapCopy;
+	private List<FatCat> listCopy;
+	private Set<FatCat> fatSetCopy;
+	private Set<Capitalist> capSetCopy;
 	
     /**
      * Adds a given element to the hierarchy.
@@ -80,7 +87,8 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
             	//System.out.println("  Test: c: " + c.getName() + " cp: " + c.getParent());System.out.flush();
         	} else { //if element does not have a parent
                 //System.out.println("  Failed: Parentless WageSlave");System.out.flush();
-        		return false;
+
+        		return (c.getClass() == FatCat.class);
         	}
         }
 
@@ -103,7 +111,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Set<Capitalist> getElements() {
-        return workers.keySet();
+        return (new HashSet<Capitalist>(workers.keySet()));
     }
 
     /**
@@ -116,7 +124,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     	if(parents == null) {
     		return (new HashSet<FatCat>());
     	}
-        return parents;
+        return (new HashSet<FatCat>(parents));
     }
 
     /**
@@ -131,7 +139,8 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     	if(children == null) {
     		return (new HashSet<Capitalist>());
     	}
-    	return children;
+    	
+    	return (new HashSet<Capitalist>(children));
     }
 
     /**
@@ -141,10 +150,17 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Map<FatCat, Set<Capitalist>> getHierarchy() {
+		Map<FatCat,Set<Capitalist>> copy = new HashMap<FatCat, Set<Capitalist>>();
+    	
     	if(this.owners == null) {
-    		return (new HashMap<FatCat, Set<Capitalist>>());
+    		return copy;
     	}
-        return this.owners;
+    	
+    	for (Map.Entry<FatCat, Set<Capitalist>> entry : this.owners.entrySet()) {
+    		copy.put(entry.getKey(), new HashSet<Capitalist>(entry.getValue()));
+    	}
+    	
+        return copy;
     }
 
     /**
