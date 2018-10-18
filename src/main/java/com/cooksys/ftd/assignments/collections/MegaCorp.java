@@ -34,54 +34,57 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     public boolean add(Capitalist capitalist) {
     	Capitalist c = capitalist;
     	if(c == null) {
-        	System.out.println("  Failed: Capitalist is null");System.out.flush();
+        	//System.out.println("  Failed: Capitalist is null");System.out.flush();
     		return false;
     	}
-    	System.out.println("Adding: " + c.getName());System.out.flush();
-    	
+    	//System.out.println("Adding: " + c.getName());System.out.flush();
     	
         //Is the element already in the hierarchy
         if(this.workers.containsKey(c)) {
-        	System.out.println("  Failed: Already in the hierarchy");System.out.flush();
+        	//System.out.println("  Failed: Already in the hierarchy");System.out.flush();
         	return false;
         } else { //if element is not in the hierarchy
+        	//System.out.println("  Not in the hierarchy");System.out.flush();
+    		if(c.getClass() == FatCat.class) {
+    			//add to hierarchy
+    			this.workers.put(c, null);
+    			this.owners.put((FatCat) c, new HashSet<Capitalist>());
+            	//System.out.println("  A Fat Cat so added whether parentless or not");
+    		}
+    		
         	//If element has a parent
         	if(c.hasParent()) {
+            	//System.out.println("  Has Parent");System.out.flush();
         		//Loop for all parents
         		while(c.getParent() != null) {
-	        		//If element's parent is not part of hierarchy
+	        		//If element's parent is not part of hierarchy (aka parents have not existed before);
 	        		if(!this.workers.containsKey(c.getParent())) {
+	                	//System.out.println("  Parent not in hierarchy: " + c.getParent().getName() + " : " + c.getParent().getSalary());System.out.flush();
 	        			//Add parent
 	        			this.workers.put(c.getParent(), null);
 	        			this.owners.put(c.getParent(), new HashSet<Capitalist>());
-	                	System.out.println("  Parent not in hierarchy");System.out.flush();
+	        			this.owners.get(c.getParent()).add(c);
 	        		} else { //if parent is part of hierarchy
-	        			if(this.owners.get(c.getParent()) == null) {
-	            			Set<Capitalist> s = this.owners.get(c.getParent());
-	            			s = new HashSet<Capitalist>();
-	            			this.owners.put(c.getParent(), s);
-	        			}
+	                	//System.out.println("  Parent in hierarchy: " + c.getParent().getName());System.out.flush();
+		        		//Check if the set is null
+		        		if(this.owners.get(c.getParent()) == null) {
+		            		Set<Capitalist> s = this.owners.get(c.getParent());
+		            		s = new HashSet<Capitalist>();
+		            		this.owners.put(c.getParent(), s);
+		        		}
 	            		this.owners.get(c.getParent()).add(c);
-	                	System.out.println("  Parent in hierarchy");System.out.flush();
 	        		}
 	        		this.workers.put(c, c.getParent());
 	        		c = c.getParent();
         		}
+            	//System.out.println("  Test: c: " + c.getName() + " cp: " + c.getParent());System.out.flush();
         	} else { //if element does not have a parent
-        		//if it is a fat cat
-        		if(c.getClass() == FatCat.class) {
-        			//add to hierarchy
-        			this.workers.put(c, null);
-        			this.owners.put(c.getParent(), new HashSet<Capitalist>());
-                	System.out.println("  Parentless FatCat");
-        		} else { //if it isn't a fat cat
-                	System.out.println("  Failed: Parentless WageSlave");System.out.flush();
-        			return false;
-        		}
+                //System.out.println("  Failed: Parentless WageSlave");System.out.flush();
+        		return false;
         	}
         }
 
-    	System.out.println("  Added");System.out.flush();
+    	//System.out.println("  Added");System.out.flush();
         return true;
     }
 
