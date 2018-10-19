@@ -12,12 +12,8 @@ import com.cooksys.ftd.assignments.collections.model.Capitalist;
 import com.cooksys.ftd.assignments.collections.model.FatCat;
 
 public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
-	// private Map<Capitalist, FatCat> workers = new HashMap<Capitalist, FatCat>();
-	// private Map<FatCat, Set<Capitalist>> owners = new
-	// HashMap<FatCat,Set<Capitalist>>(); //parents
-
 	// Hierarchy
-	private Map<FatCat, Set<Capitalist>> hierarchy = new HashMap<FatCat, Set<Capitalist>>();
+	private Set<Capitalist> listOfWorkers = new HashSet<Capitalist>();
 
 	/**
 	 * Adds a given element to the hierarchy.
@@ -47,148 +43,41 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 		}
 		// System.out.println("Adding: " + c.getName());System.out.flush();
 
-		// Is it a fat cat?
-		if (c.getClass() == FatCat.class) {
-			// System.out.println(" Is FatCat");System.out.flush();
-			// If it does not exist in the hierarchy
-			if (!this.hierarchy.containsKey(c)) {
-				// System.out.println(" Not in hierarchy");System.out.flush();
-				this.hierarchy.put((FatCat) c, new HashSet<Capitalist>());
-				// Does the c have a Parent?
-				if (c.getParent() != null) {
-					// While there are more parents
-					while (c.getParent() != null) {
-						// System.out.println(" Has Parent: " +
-						// c.getParent().getName());System.out.flush();
-						// If parent do not exist in hierarchy
-						if (!this.hierarchy.containsKey(c.getParent())) {
-							// System.out.println(" Parent NOT in Hierarchy");System.out.flush();
-							// create new parent in hierarchy and add child
-							this.hierarchy.put(c.getParent(), new HashSet<Capitalist>());
-							added = true;
-						} else {
-							// System.out.println(" Parent IS in Hierarchy");System.out.flush();
-						}
-						this.hierarchy.get(c.getParent()).add(c); // because it's a set, it'll delete if there is
-																	// duplicates
-						c = c.getParent();
-					}
-					// System.out.println(" End Parent Loop: " + c.getParent() + " : " +
-					// added);System.out.flush();
-					return added;
-				} else { // If there is a FatCat that does not exist without a parent
-					// System.out.println(" Does NOT have parent");System.out.flush();
-					this.hierarchy.put((FatCat) c, new HashSet<Capitalist>());
+		//Is a fat cat
+		if(c.getClass() == FatCat.class) {
+			//Is the list doen't have this capitalist add it
+			if(!listOfWorkers.contains(c)) {
+				listOfWorkers.add(c);
+				added = true;
+			}
+			while(c.hasParent()) {
+				//If parent is not in list
+				if(!listOfWorkers.contains(c.getParent())) {
+					listOfWorkers.add(c.getParent());
+					added = true;
 				}
-			} else { // If is in hierarchy
-				// System.out.println(" Is in hierarchy");System.out.flush();
-				// While there are more parents
-				while (c.getParent() != null) {
-					// System.out.println(" Has Parent: " +
-					// c.getParent().getName());System.out.flush();
-					// If parent do not exist in hierarchy
-					if (!this.hierarchy.containsKey(c.getParent())) {
-						// System.out.println(" Parent NOT in Hierarchy");System.out.flush();
-						// create new parent in hierarchy and add child
-						this.hierarchy.put(c.getParent(), new HashSet<Capitalist>());
+				c = c.getParent();
+			}
+		} else { //Is a wage slave
+			//if slave has parent
+			if(c.hasParent()) {
+				if(!listOfWorkers.contains(c)) {
+					listOfWorkers.add(c);
+					added = true;
+				}
+				//While parent has parents
+				while(c.hasParent()) {
+					//If parent is not in list
+					if(!listOfWorkers.contains(c.getParent())) {
+						listOfWorkers.add(c.getParent());
 						added = true;
-					} else {
-						// System.out.println(" Parent IS in Hierarchy");System.out.flush();
 					}
-					this.hierarchy.get(c.getParent()).add(c); // because it's a set, it'll delete if there is duplicates
 					c = c.getParent();
 				}
-				// System.out.println(" End Parent Loop: " + c.getParent());System.out.flush();
-				return added;
-			}
-		} else { // if it is not a fat cat? (Is a wage slave);
-			// System.out.println(" Is WageSlave");System.out.flush();
-			// If WageSlave is not in hierarchy
-			if (!has(c)) {
-				// System.out.println(" slave not in Hierarchy");System.out.flush();
-				// Does the c have a Parent?
-				if (c.getParent() != null) {
-					// While there are more parents
-					while (c.getParent() != null) {
-						// System.out.println(" Has Parent: " +
-						// c.getParent().getName());System.out.flush();
-						// If parent do not exist in hierarchy
-						if (!this.hierarchy.containsKey(c.getParent())) {
-							// System.out.println(" Parent NOT in Hierarchy");System.out.flush();
-							// create new parent in hierarchy and add child
-							this.hierarchy.put(c.getParent(), new HashSet<Capitalist>());
-						} else {
-							// System.out.println(" Parent IS in Hierarchy");System.out.flush();
-						}
-						this.hierarchy.get(c.getParent()).add(c); // because it's a set, it'll delete if there is
-																	// duplicates
-						c = c.getParent();
-					}
-					// System.out.println(" End Parent Loop: " + c.getParent());System.out.flush();
-				} else { // If there is a wage slave without a parent
-					// System.out.println(" Does NOT have Parent: " +
-					// c.getParent().getName());System.out.flush();
-					return false;
-				}
-			} else {
-				// System.out.println(" slave is in Hierarchy");System.out.flush();
-				return false;
 			}
 		}
-		// System.out.println(" ---Added---");System.out.flush();
-		return true;
-
-		// ---Old method---
-		// Is the element already in the hierarchy
-		// if(this.workers.containsKey(c)) {
-		// //System.out.println(" Failed: Already in the hierarchy");System.out.flush();
-		// return false;
-		// } else { //if element is not in the hierarchy
-		// //System.out.println(" Not in the hierarchy");System.out.flush();
-		// if(c.getClass() == FatCat.class) {
-		// //add to hierarchy
-		// this.workers.put(c, null);
-		// this.owners.put((FatCat) c, new HashSet<Capitalist>());
-		// //System.out.println(" A Fat Cat so added whether parentless or not");
-		// }
-		// //If element has a parent
-		// if(c.hasParent()) {
-		// //System.out.println(" Has Parent");System.out.flush();
-		// //Loop for all parents
-		// while(c.getParent() != null) {
-		// //If element's parent is not part of hierarchy (aka parents have not existed
-		// before);
-		// if(!this.workers.containsKey(c.getParent())) {
-		// //System.out.println(" Parent not in hierarchy: " + c.getParent().getName() +
-		// " : " + c.getParent().getSalary());System.out.flush();
-		// //Add parent
-		// this.workers.put(c.getParent(), null);
-		// this.owners.put(c.getParent(), new HashSet<Capitalist>());
-		// this.owners.get(c.getParent()).add(c);
-		// } else { //if parent is part of hierarchy
-		// //System.out.println(" Parent in hierarchy: " +
-		// c.getParent().getName());System.out.flush();
-		// //Check if the set is null
-		// if(this.owners.get(c.getParent()) == null) {
-		// Set<Capitalist> s = this.owners.get(c.getParent());
-		// s = new HashSet<Capitalist>();
-		// this.owners.put(c.getParent(), s);
-		// }
-		// this.owners.get(c.getParent()).add(c);
-		// }
-		// this.workers.put(c, c.getParent());
-		// c = c.getParent();
-		// }
-		// //System.out.println(" Test: c: " + c.getName() + " cp: " +
-		// c.getParent());System.out.flush();
-		// } else { //if element does not have a parent
-		// System.out.println(" Failed: Parentless WageSlave");System.out.flush();
-		// return (c.getClass() == FatCat.class);
-		// }
-		// }
-
-		// System.out.println(" Added");System.out.flush();
-		// return true;
+		
+		return added;
 	}
 
 	/**
@@ -197,17 +86,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	 */
 	@Override
 	public boolean has(Capitalist capitalist) {
-		if (this.hierarchy.containsKey(capitalist)) {
-			return true;
-		} else {
-			for (Map.Entry<FatCat, Set<Capitalist>> entry : this.hierarchy.entrySet()) {
-				for (Capitalist c : entry.getValue()) {
-					if (c == capitalist)
-						return true;
-				}
-			}
-		}
-		return false;
+		return listOfWorkers.contains(capitalist);
 	}
 
 	/**
@@ -216,11 +95,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	 */
 	@Override
 	public Set<Capitalist> getElements() {
-		Set<Capitalist> elements = new HashSet<Capitalist>();
-		for (Map.Entry<FatCat, Set<Capitalist>> entry : this.hierarchy.entrySet()) {
-			elements.add(entry.getKey());
-			elements.addAll(entry.getValue());
-		}
+		Set<Capitalist> elements = new HashSet<Capitalist>(listOfWorkers);
 
 		return elements;
 	}
@@ -231,10 +106,14 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	 */
 	@Override
 	public Set<FatCat> getParents() {
-		Set<FatCat> parents = this.hierarchy.keySet();
-		if (parents == null) {
-			return (new HashSet<FatCat>());
+		Set<FatCat> parents = new HashSet<FatCat>();
+		
+		for(Capitalist c : listOfWorkers) {
+			if(c.getClass() == FatCat.class) {
+				parents.add((FatCat) c);
+			}
 		}
+		
 		return (new HashSet<FatCat>(parents));
 	}
 
@@ -246,11 +125,15 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	 */
 	@Override
 	public Set<Capitalist> getChildren(FatCat fatCat) {
-		Set<Capitalist> children = this.hierarchy.get(fatCat);
-		if (children == null) {
-			return (new HashSet<Capitalist>());
+		Set<Capitalist> children = new HashSet<Capitalist>();
+		
+		for(Capitalist child : listOfWorkers) {
+			if(child.getParent() == fatCat) {
+				children.add(child);
+			}
 		}
-		return (new HashSet<Capitalist>(children));
+		
+		return children;
 	}
 
 	/**
@@ -262,14 +145,34 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	public Map<FatCat, Set<Capitalist>> getHierarchy() {
 		Map<FatCat, Set<Capitalist>> copy = new HashMap<FatCat, Set<Capitalist>>();
 
-		if (this.hierarchy == null) {
-			return copy;
+		//System.out.println("Start"); System.out.flush();
+		for(Capitalist c : listOfWorkers) {
+			//System.out.println(" c:" + c.getName()); System.out.flush();
+			if(c.getClass() == FatCat.class) {
+				if(!copy.containsKey(c)) {
+					copy.put((FatCat) c, new HashSet<Capitalist>());
+				}
+				if(c.hasParent()) {
+					//System.out.println("  Has parent " + c.getParent().getName()); System.out.flush();
+					if(!copy.containsKey(c.getParent())) {
+						//System.out.println("   Is not in list"); System.out.flush();
+						copy.put(c.getParent(), new HashSet<Capitalist>());
+					}
+					copy.get(c.getParent()).add(c);
+				}
+			} else {
+				if(c.hasParent()) {
+					if(copy.containsKey(c.getParent())) {
+						copy.get(c.getParent()).add(c);
+					} else {
+						copy.put(c.getParent(), new HashSet<Capitalist>());
+						copy.get(c.getParent()).add(c);
+					}
+				}
+			}
 		}
-
-		for (Map.Entry<FatCat, Set<Capitalist>> entry : this.hierarchy.entrySet()) {
-			copy.put(entry.getKey(), new HashSet<Capitalist>(entry.getValue()));
-		}
-
+		//System.out.println("End");
+			
 		return copy;
 	}
 
@@ -283,18 +186,16 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 	public List<FatCat> getParentChain(Capitalist capitalist) {
 		List<FatCat> chain = new ArrayList<FatCat>();
 		Capitalist c = capitalist;
-		boolean continueLoop = true;
-
-		while (continueLoop) {
-			continueLoop = false;
-			for (Map.Entry<FatCat, Set<Capitalist>> entry : this.hierarchy.entrySet()) {
-				if (entry.getValue().contains(c)) {
-					chain.add(entry.getKey());
-					c = entry.getKey();
-					continueLoop = true;
-				}
-			}
+		
+		if(c == null || !listOfWorkers.contains(c)) {
+			return chain;
 		}
+		
+		while(c.hasParent()) {
+			chain.add(c.getParent());
+			c = c.getParent();
+		}
+		
 		return chain;
 	}
 }
